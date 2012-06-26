@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> </title>
+        <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+        <script src="signals.js"></script>
+        <script src="hasher.js"></script>
+        <script src="crossroads.js"></script>
+        
+    </head>
+    <body>
+<div id="location"></div> 
+<h3>Navigation</h3>
+<nav>
+  <a id="fooLink">foo</a> |
+  <a id="loremlink">lorem/ipsum</a> |
+  <a id="itemLink1">item 1</a> |
+  <a id="itemLink2">item 2</a>
+</nav>
+<script>
+$(function(){
+        
+        //setup crossroads
+        crossroads.addRoute('foo', function() {
+            $('#location').html('foo');
+        });
+        crossroads.addRoute('lorem/ipsum', function() {
+            $('#location').html('lorem/ipsum');
+        });
+        crossroads.addRoute('item/{id}', function(id) {
+            $('#location').html('item/' + id);
+        });
+        crossroads.routed.add(console.log, console); //log all routes
+        //setup hasher
+        
+        
+        function parseHash(newHash, oldHash) {
+            crossroads.parse(newHash);
+        }
+        hasher.initialized.add(parseHash); //parse initial hash
+        hasher.changed.add(parseHash); //parse hash changes
+        hasher.init(); //start listening for history change
+        //update URL fragment generating new history record
+        hasher.setHash('lorem/ipsum');
+        
+        $("#fooLink").click(function(){
+            hasher.setHash("foo");    
+        });
+        $("#loremlink").click(function(){
+            hasher.setHash("lorem/ipsum");    
+        });
+        $("#itemLink1").click(function(){
+            hasher.setHash("item/1");    
+        });
+        $("#itemLink2").click(function(){
+            hasher.setHash("item/2");    
+        });
+});
+        </script>
+        
+    </body>
+</html>
